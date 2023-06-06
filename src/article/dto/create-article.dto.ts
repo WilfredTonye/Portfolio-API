@@ -1,0 +1,14 @@
+import  { IsString,IsNotEmpty,IsNumber, MaxLength } from "class-validator"
+export class CreateArticleDto{
+    @IsString()
+    @IsNotEmpty()
+    readonly Titre:string;
+
+    @IsString()
+    @MaxLength(150)
+    @IsNotEmpty()
+    readonly Description:string;
+
+
+
+}
