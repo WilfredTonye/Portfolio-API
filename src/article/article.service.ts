@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Article } from './schema/article.schema';
 import * as mongoose from 'mongoose';
+import { Query } from 'express-serve-static-core';
 
 @Injectable()
 export class ArticleService {
@@ -10,8 +11,18 @@ export class ArticleService {
         private articleModel: mongoose.Model<Article>,
     ){}
 
-    async getAllArticle():Promise<Article[]> {
-        const article = await this.articleModel.find();
+    async getAllArticle(query:Query):Promise<Article[]> {
+
+        const resPerPage = 3
+        const currentPage = Number(query.page) || 1
+        const skip = resPerPage*(currentPage -1)
+        const keyword = query.keyword ? {
+            Titre: {
+                $regex:query.keyword,
+                $options:'i'
+            }
+        }:{}
+        const article = await this.articleModel.find({...keyword}).limit(resPerPage).skip(skip);
         return article;
     }
 

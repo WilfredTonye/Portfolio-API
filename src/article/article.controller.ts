@@ -1,9 +1,11 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Query, Res, UseGuards } from '@nestjs/common';
 import { ArticleService } from './article.service';
 import { Article } from './schema/article.schema';
 import { CreateArticleDto } from './dto/create-article.dto';
 import { UpdateArticleDto } from './dto/update-article.dto';
 import { response } from 'express';
+import {Query as ExpressQuery} from 'express-serve-static-core';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('article')
 export class ArticleController {
@@ -12,9 +14,9 @@ export class ArticleController {
     ){}
 
     @Get()
-    async getAllArticles(@Res() response):Promise<Article[]> {
+    async getAllArticles(@Res() response, @Query() query:ExpressQuery):Promise<Article[]> {
         try{
-            const articleData = await this.articleService.getAllArticle()
+            const articleData = await this.articleService.getAllArticle(query)
             return response.status(HttpStatus.OK).json({
                 message:"Liste des articles",
                 articleData
@@ -26,6 +28,7 @@ export class ArticleController {
     }
 
     @Post()
+    @UseGuards(AuthGuard())
     async createArticle(@Res() response,@Body() article:CreateArticleDto):Promise<Article> {
 
         try{
