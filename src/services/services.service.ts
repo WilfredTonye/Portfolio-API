@@ -34,7 +34,7 @@ export class ServicesService {
     async getOneService(Id:string ):Promise<Service> {
         const serviceId = await this.serviceModel.findById(Id)
         if(! serviceId) {
-            throw new NotFoundException('Article introuvable')
+            throw new NotFoundException('Service introuvable')
         }
         return serviceId
     }
